@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello world</title>
+  </head>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    // Handel data from serve
+    // socket.on('message', function(data){document.write(data)});
+
+    // Handel server emit
+    // socket.on('testerEvent', function(data){document.write(data.description)});
+
+    // User clint emit
+    // socket.emit('clientEvent', 'Sent an event from the client!');
+
+    // socket.on("hi", function (data) {
+    //   document.body.innerHTML = "";
+    //   document.write(data);
+    // });
+
+    // User connect to the room
+    socket.on("connectToRoom", function (data) {
+      document.body.innerHTML = "";
+      document.write(data);
+    });
+  </script>
+  <body>
+    Hello world
+  </body>
+</html>
