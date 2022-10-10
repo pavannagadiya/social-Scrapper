@@ -11,7 +11,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 // Fetch instagram Video src
-async function instaVideoScrappingFunction(req, res) {
+async function instaVideoScrappingFunction(url, res) {
   try {
     // Read the cookie
     let cookieFromFile = await readCookies();
@@ -40,37 +40,59 @@ async function instaVideoScrappingFunction(req, res) {
     await page2.setUserAgent(await browser.userAgent());
 
     // pest destination URL and wait till the res.
-    await page2.goto(
-      "https://www.instagram.com/reel/CiuoB09jqHT/?igshid=NzNkNDdiOGI=",
-      {
-        waitUntil: "networkidle0",
-      }
-    );
-
-    // Just took a snap of current page from browser
-    await page2.screenshot({ path: "GFG2.png" });
-
-    // Evaluate whole page
-    let urls = await page2.evaluate(() => {
-      let results = [];
-
-      // Fetch data as we want
-      let items = document.querySelectorAll("video");
-
-      items.forEach((item) => {
-        results.push({
-          url: item.src,
-          text: item.content,
-        });
-      });
-      return results;
+    await page2.goto(url, {
+      waitUntil: "networkidle0",
     });
-    console.log("items: ", urls);
-    // return urls;
-    utils.sendResponse(res, 200, "success", urls);
+
+    const isItImgOrVideo = url.match("https://www.instagram.com/p/.*")
+      ? "img"
+      : "video";
+
+    let urls;
+    if (isItImgOrVideo == "img") {
+      // Evaluate whole page
+      urls = await page2.evaluate(() => {
+        let results = [];
+
+        // Fetch data as we want
+        let items = document.querySelectorAll("img");
+
+        items.forEach((item) => {
+          results.push({
+            url: item.src,
+            alt: item.alt,
+          });
+        });
+        return results;
+      });
+    } else {
+      // Evaluate whole page
+      urls = await page2.evaluate(() => {
+        let results = [];
+
+        // Fetch data as we want
+        let items = document.querySelectorAll("video");
+
+        items.forEach((item) => {
+          results.push({
+            url: item.src,
+            poster: item.poster,
+          });
+        });
+        return results;
+      });
+    }
 
     // Close virtual browser
-    return await browser.close();
+    await browser.close();
+
+    // return urls;
+    return utils.sendResponse(
+      res,
+      200,
+      messages.dataScrapped,
+      isItImgOrVideo == "img" ? urls[0] : urls
+    );
   } catch (error) {
     console.log("error: ", error);
     return utils.sendResponse(res, 400, messages.something_wrong, error);
@@ -78,7 +100,7 @@ async function instaVideoScrappingFunction(req, res) {
 }
 
 // Fetch instagram image src
-async function instaPhotoScrappingFunction(req, res) {
+async function instaPhotoScrappingFunction(url, res) {
   try {
     // Read the cookie
     let cookieFromFile = await readCookies();
@@ -108,14 +130,12 @@ async function instaPhotoScrappingFunction(req, res) {
 
     // pest destination URL and wait till the res.
     await page2.goto(
-      "https://www.instagram.com/p/COeWvqhpwx_iQR7LhRvd-XZG4zFuonS7w6bs2Q0/?igshid=NzNkNDdiOGI=",
+      url,
+      // "https://www.instagram.com/p/COeWvqhpwx_iQR7LhRvd-XZG4zFuonS7w6bs2Q0/?igshid=NzNkNDdiOGI=",
       {
         waitUntil: "networkidle0",
       }
     );
-
-    // Just took a snap of current page from browser
-    await page2.screenshot({ path: "instaPhoto.png" });
 
     // Evaluate whole page
     let urls = await page2.evaluate(() => {
@@ -162,18 +182,12 @@ async function setNewInstaCookie() {
       waitUntil: "networkidle0",
     });
 
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "GFG1.png" });
-
     // Fetch inputs and buttons wait here till it found
     await Promise.all([
       page.waitForSelector('input[name="username"]'),
       page.waitForSelector('input[name="password"]'),
       page.waitForSelector('button[type="submit"]'),
     ]);
-
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "GFG2.png" });
 
     // Pass credentials
     await page.type('input[name="username"]', instaUserName);
@@ -182,22 +196,14 @@ async function setNewInstaCookie() {
     // Hit the submit button
     await page.click('button[type="submit"]');
 
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "GFG3.png" });
-
     // Wait untill responce
     await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "GFG4.png" });
 
     // Get cookies
     const cookies = await page.cookies();
 
     // Open new page in virtual browser
     const page2 = await browser.newPage();
-
-    await page.screenshot({ path: "GFG5.png" });
 
     // set cookies
     await page2.setCookie(...cookies);
@@ -209,9 +215,6 @@ async function setNewInstaCookie() {
     await page2.goto("https://www.instagram.com", {
       waitUntil: "networkidle0",
     });
-    await page.screenshot({ path: "GFG6.png" });
-
-    console.log("cookies: ", typeof cookies);
 
     // Store cookies for future use.
     fs.writeFileSync(

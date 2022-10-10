@@ -1,29 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const { tempMiddleware } = require("../middlewares/temp");
+const { urlCheckMiddleware } = require("../middlewares/apiReqBodyChecker");
 const instaScrapperController = require("../controller/InstaScrapper");
 const youtubeScrapperController = require("../controller/youtubeScrapper");
 const facebookScrapperController = require("../controller/FacebookScrapper");
+const SingleController = require("../controller/SingleController");
 
+router.get("/", urlCheckMiddleware, SingleController.SingleController);
 router.get(
   "/insta-video",
-  tempMiddleware,
+  urlCheckMiddleware,
   instaScrapperController.instaVideoScrappingFunction
 );
 router.get(
   "/insta-photo",
-  tempMiddleware,
+  urlCheckMiddleware,
   instaScrapperController.instaPhotoScrappingFunction
 );
 router.get(
   "/youtube",
-  tempMiddleware,
+  urlCheckMiddleware,
   youtubeScrapperController.youtubeScrappingFunction
 );
 router.get(
   "/facebook",
-  tempMiddleware,
-  facebookScrapperController.facebookVideoScrappingFunction
+  urlCheckMiddleware,
+  facebookScrapperController.facebookPhotoScrappingFunction
 );
 
 module.exports = router;

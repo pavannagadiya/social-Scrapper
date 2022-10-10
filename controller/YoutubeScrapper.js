@@ -2,16 +2,15 @@ const utils = require("../utils/utils");
 const { messages } = require("../utils/en");
 const axios = require("axios");
 
-async function youtubeScrappingFunction(req, res) {
+async function youtubeScrappingFunction(url, res) {
   try {
-    let { url } = req.body;
-    console.log("url: ", url);
+    // YouTube scrapping call
     await axios
       .post("https://ssyoutube.com/api/convert", {
         url,
       })
       .then((result) => {
-        utils.sendResponse(res, 200, "success", result.data);
+        utils.sendResponse(res, 200, "success", result.data.url);
       })
       .catch((err) => {
         console.log("err: ", err);

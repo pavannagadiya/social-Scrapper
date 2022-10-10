@@ -8,13 +8,17 @@ const fs = require("fs");
 
 const { fbEmailId, fbPassword } = process.env;
 
-async function facebookVideoScrappingFunction(req, res) {
+async function facebookPhotoScrappingFunction(url, res) {
   try {
     // Read the cookie
     let cookies = await readCookies();
 
+    // If not getting cookies then get cookies with login the facebook page
     if (cookies === undefined) {
+      // Call login page and set cookies
       await setFacebookCookies();
+
+      // Read the cookie
       cookies = await readCookies();
     }
 
@@ -33,19 +37,16 @@ async function facebookVideoScrappingFunction(req, res) {
     // set cookies
     await page2.setCookie(...JSON.parse(cookies));
 
-    await page2.goto("https://fb.watch/fSzdkh6bwg/", {
+    await page2.goto(url, {
       waitUntil: "networkidle0",
     });
-
-    // Just took a snap of current page from browser
-    await page2.screenshot({ path: "GFG2.png" });
 
     // Evaluate whole page
     let urls = await page2.evaluate(() => {
       let results = [];
 
       // Fetch data as we want
-      let items = document.querySelectorAll("video");
+      let items = document.querySelectorAll("img");
 
       items.forEach((item) => {
         results.push({
@@ -55,11 +56,22 @@ async function facebookVideoScrappingFunction(req, res) {
       });
       return results;
     });
-    // return urls;
-    utils.sendResponse(res, 200, "success", urls);
+
+    if (urls.length >= 6) {
+      // Close virtual browser
+      await browser.close();
+
+      // return urls
+      return utils.sendResponse(res, 200, messages.faceBookProfilePic, urls[6]);
+    } else {
+      // Close virtual browser
+      await browser.close();
+
+      return utils.sendResponse(res, 400, messages.something_wrong);
+    }
 
     // Close virtual browser
-    return await browser.close();
+    // return await browser.close();
   } catch (error) {
     console.log("error: ", error);
     return utils.sendResponse(res, 400, messages.something_wrong, error);
@@ -86,18 +98,12 @@ async function setFacebookCookies() {
       waitUntil: "networkidle0",
     });
 
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "FB1.png" });
-
     // Fetch inputs and buttons wait here till it found
     await Promise.all([
       page.waitForSelector('input[name="email"]'),
       page.waitForSelector('input[name="pass"]'),
       page.waitForSelector('button[type="submit"]'),
     ]);
-
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "FB2.png" });
 
     // Pass credentials
     await page.type('input[name="email"]', fbEmailId);
@@ -106,19 +112,11 @@ async function setFacebookCookies() {
     // Hit the submit button
     await page.click('button[type="submit"]');
 
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "FB3.png" });
-
     // Wait untill responce
     await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-    // Just took a snap of current page from browser
-    await page.screenshot({ path: "FB4.png" });
-
     // Get cookies
     const cookies = await page.cookies();
-
-    console.log("cookies: ", cookies);
 
     // Store cookies for future use.
     fs.writeFileSync("facebook_cookies.json", JSON.stringify(cookies), "utf-8");
@@ -148,5 +146,5 @@ async function readCookies() {
 }
 
 module.exports = {
-  facebookVideoScrappingFunction,
+  facebookPhotoScrappingFunction,
 };
