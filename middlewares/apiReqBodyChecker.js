@@ -14,5 +14,27 @@ const urlCheckMiddleware = async function urlChecker(req, res, next) {
     return utils.sendResponse(res, 500, "Internal server error", error);
   }
 };
+const deviceIdAndFcmTnkCheckMiddleware =
+  async function deviceIdAndFcmTnkChecker(req, res, next) {
+    try {
+      const header = req.headers.authorization;
+      const { deviceId, fcmTnk } = req.body;
+      if (
+        _.isUndefined(header) &&
+        !_.isUndefined(fcmTnk) &&
+        !_.isUndefined(deviceId)
+      ) {
+        next();
+      } else {
+        return utils.sendResponse(
+          res,
+          400,
+          "Device Id and FCM Token is required."
+        );
+      }
+    } catch (error) {
+      return utils.sendResponse(res, 500, "Internal server error", error);
+    }
+  };
 
-module.exports = { urlCheckMiddleware };
+module.exports = { urlCheckMiddleware, deviceIdAndFcmTnkCheckMiddleware };
