@@ -3,7 +3,7 @@ const messages = {
   something_wrong: "Something went wrong.",
   firstFunctionComplete: "This response from First Function.",
   weAreNotProvideThisService: "Sorry, we are not provide this service at this time.",
-  dataScrapped: "Data scrapped successful.",
+  dataScrapped: "Data fetched successful.",
   faceBookProfilePic: "Facebook picture fetched successful.",
   fetchAllCategory: "Fetch all category successful.",
   facingSomeIssueCategory: "Facing some issue to fetching category!",

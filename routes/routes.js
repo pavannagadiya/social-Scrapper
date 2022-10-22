@@ -5,7 +5,7 @@ const {
   deviceIdAndFcmTnkCheckMiddleware,
 } = require("../middlewares/apiReqBodyChecker");
 const instaScrapperController = require("../controller/InstaScrapper");
-const youtubeScrapperController = require("../controller/youtubeScrapper");
+const youtubeScrapperController = require("../controller/YoutubeScrapper");
 const facebookScrapperController = require("../controller/FacebookScrapper");
 const SingleController = require("../controller/SingleController");
 const CategoryController = require("../controller/CategoryController");
@@ -20,7 +20,7 @@ router.all("*", (req, res, next) => {
   next();
 });
 
-router.get("/", urlCheckMiddleware, SingleController.SingleController);
+router.post("/", urlCheckMiddleware, SingleController.SingleController);
 router.get("/get_all_category", CategoryController.getAllCategory);
 router.post(
   "/user_device_info",

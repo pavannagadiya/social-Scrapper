@@ -6,6 +6,9 @@ dotenv.config({ path: config });
 const { instaUserName, instaPassword } = process.env;
 const puppeteer = require("puppeteer");
 
+const { getVideoDurationInSeconds } = require("get-video-duration");
+const urlMetadata = require("url-metadata");
+
 // const cookiesTxt = require("../cookies.txt");
 
 const fs = require("fs");
@@ -109,11 +112,48 @@ async function instaVideoScrappingFunction(url, res) {
     // return urls;
 
     if (isItImgOrVideo != "img") {
+      let timing = await getVideoDurationInSeconds(urls[0].url).then(
+        (duration) => {
+          return duration / 60;
+        }
+      );
+
+      const meta = await urlMetadata(url).then(
+        function (metadata) {
+          // success handler
+          return metadata;
+        },
+        function (error) {
+          // failure handler
+          console.log(error);
+          return null;
+        }
+      );
+
+      const videoResponse = {
+        url: url,
+        title: meta.title ? meta.title : null,
+        thumbnail: meta.poster ? meta.poster : null,
+        duration: timing.toFixed(2),
+        source: "instagrame",
+        medias: [
+          {
+            url: urls[0].url,
+            quality: "hd",
+            extension: "hd",
+            size: "1914629",
+            formattedSize: "1.83 MB",
+            videoAvailable: true,
+            audioAvailable: true,
+          },
+        ],
+      };
+
       return utils.sendResponse(
         res,
         200,
-        messages.temDataFetched,
-        staticResForTemp
+        messages.dataScrapped,
+        videoResponse
       );
     }
 

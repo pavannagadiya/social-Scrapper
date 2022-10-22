@@ -1,7 +1,7 @@
 const utils = require("../utils/utils");
 const { messages } = require("../utils/en");
 const { table } = require("../config/tableNames");
-var connection = require("../config/dbInfo");
+var {connection} = require("../config/dbInfo");
 
 async function usersDeviceIdAndFcm(req, res) {
   try {
@@ -10,7 +10,7 @@ async function usersDeviceIdAndFcm(req, res) {
     const query = `SELECT * FROM ${table.appUsers} WHERE device_id = "${deviceId}"  ORDER BY id ASC`;
     await connection.query(query, async function (err, rows) {
       if (rows.length > 0) {
-        const updateUserData = `UPDATE ${table.appUsers} SET device_id = "${deviceId}" , fcm_tkn = "${fcmTnk}" WHERE id = ${rows[0].id}`;
+        const updateUserData = `UPDATE ${table.appUsers} SET device_id = "${deviceId}" , fcm_token = "${fcmTnk}" WHERE id = ${rows[0].id}`;
         await connection.query(updateUserData, function (err, rows, fields) {
           if (err)
             return utils.sendResponse(
@@ -26,7 +26,7 @@ async function usersDeviceIdAndFcm(req, res) {
           );
         });
       } else {
-        const insertUserDataQuery = `INSERT INTO ${table.appUsers} (device_id, fcm_tkn) VALUES ("${deviceId}", "${fcmTnk}")`;
+        const insertUserDataQuery = `INSERT INTO ${table.appUsers} (device_id, fcm_token) VALUES ("${deviceId}", "${fcmTnk}")`;
         await connection.query(
           insertUserDataQuery,
           function (err, rows, fields) {

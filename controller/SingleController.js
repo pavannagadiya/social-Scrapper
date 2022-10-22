@@ -2,7 +2,7 @@ const url = require("url");
 const utils = require("../utils/utils");
 const { messages } = require("../utils/en");
 const instaScrapperController = require("../controller/InstaScrapper");
-const youtubeScrapperController = require("../controller/youtubeScrapper");
+const youtubeScrapperController = require("../controller/YoutubeScrapper");
 const facebookScrapperController = require("../controller/FacebookScrapper");
 
 async function SingleController(req, res) {

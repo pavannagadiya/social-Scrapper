@@ -1,7 +1,7 @@
 module.exports.config = function () {
   let path;
-  const env = process.env.NODE_ENV;
-  if (env.trim() === "production") {
+  const env = "development";
+  if ("production") {
     path = "./config/prod.env";
   } else {
     path = "./config/local.env";
