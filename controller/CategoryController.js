@@ -5,7 +5,7 @@ const { table } = require("../config/tableNames");
 
 async function getAllCategory(req, res) {
   try {
-    const query = `SELECT * FROM ${table.mediaCategories} ORDER BY id ASC`;
+    const query = `SELECT * FROM ${table.mediaCategories} WHERE is_active = 1 ORDER BY id ASC`;
     await connection.query(query, async function (err, rows) {
       if (err)
         return utils.sendResponse(

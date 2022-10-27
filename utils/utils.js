@@ -21,7 +21,13 @@ const asyncForEach = async (array, callback) => {
   }
 };
 
-const weProvideServices = ["youtube", "facebook", "instagram"];
+const weProvideServices = [
+  "youtube",
+  "facebook",
+  "instagram",
+  "imdb",
+  "sharechat",
+];
 
 module.exports = {
   sendResponse,

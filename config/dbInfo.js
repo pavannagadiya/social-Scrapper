@@ -2,10 +2,14 @@ const mysql = require("mysql");
 
 const connection = mysql.createConnection({
   host: "localhost", // host for connection
+  // host: "127.0.0.1", // host for connection
   // ort: 3302, // default port for mysql is 3306
   database: "mediashare", // database from which we want to connect out node application
+  // database: "media_share_360", // database from which we want to connect out node application
   user: "mediashare", // username of the mysql connection
+  // user: "root", // username of the mysql connection
   password: "cV4VB1D9yTr2vvxUaWF3", // password of the mysql connection
+  // password: "", // password of the mysql connection
 });
 
 // connection.on("error", function (err) {

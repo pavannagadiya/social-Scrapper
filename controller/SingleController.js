@@ -4,6 +4,8 @@ const { messages } = require("../utils/en");
 const instaScrapperController = require("../controller/InstaScrapper");
 const youtubeScrapperController = require("../controller/YoutubeScrapper");
 const facebookScrapperController = require("../controller/FacebookScrapper");
+const ImdbScrapperController = require("../controller/ImdbScrapper");
+const SharechatScrapperController = require("../controller/SharechatScrapper");
 
 async function SingleController(req, res) {
   try {
@@ -41,6 +43,19 @@ async function SingleController(req, res) {
       case "instagram":
         scrappedData =
           await instaScrapperController.instaVideoScrappingFunction(url, res);
+        break;
+      case "imdb":
+        scrappedData = ImdbScrapperController.imdbVideoScrappingFunction(
+          url,
+          res
+        );
+        break;
+      case "sharechat":
+        scrappedData =
+          await SharechatScrapperController.SharechatScrappingFunction(
+            url,
+            res
+          );
         break;
     }
 
