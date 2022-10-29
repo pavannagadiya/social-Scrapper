@@ -6,6 +6,7 @@ const youtubeScrapperController = require("../controller/YoutubeScrapper");
 const facebookScrapperController = require("../controller/FacebookScrapper");
 const ImdbScrapperController = require("../controller/ImdbScrapper");
 const SharechatScrapperController = require("../controller/SharechatScrapper");
+const TakatakScrapperController = require("./TakatakScrapper");
 
 async function SingleController(req, res) {
   try {
@@ -56,6 +57,12 @@ async function SingleController(req, res) {
             url,
             res
           );
+        break;
+      case "takatakmojappin":
+        scrappedData = await TakatakScrapperController.TakatakScrappingFunction(
+          url,
+          res
+        );
         break;
     }
 

@@ -27,6 +27,7 @@ const weProvideServices = [
   "instagram",
   "imdb",
   "sharechat",
+  "takatakmojappin"
 ];
 
 module.exports = {
