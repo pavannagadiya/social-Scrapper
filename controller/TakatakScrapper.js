@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const config = require("../config/config").config();
 dotenv.config({ path: config });
 const puppeteer = require("puppeteer");
+const { fetchVideoSizeFromHeaders } = require("../helper/FetchVideoHeaders");
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 const urlMetadata = require("url-metadata");
@@ -42,6 +43,7 @@ async function TakatakScrappingFunction(url, res) {
     timing = await getVideoDurationInSeconds(urls[0].url).then((duration) => {
       return duration / 60;
     });
+    let fileSizeFromSource = await fetchVideoSizeFromHeaders(urls[0].url);
 
     await urlMetadata(url)
       .then(async function (metadata) {
@@ -56,8 +58,10 @@ async function TakatakScrappingFunction(url, res) {
               url: urls[0].url,
               quality: "HD",
               extension: "mp4",
-              size: "1914629",
-              formattedSize: "1.83 MB",
+              size: fileSizeFromSource ? fileSizeFromSource : "1914629",
+              formattedSize: fileSizeFromSource
+                ? (fileSizeFromSource / (1024 * 1024)).toFixed(2)
+                : "1.83 MB",
               videoAvailable: true,
               audioAvailable: true,
             },

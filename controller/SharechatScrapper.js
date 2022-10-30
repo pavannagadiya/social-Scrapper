@@ -7,6 +7,7 @@ const puppeteer = require("puppeteer");
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 const urlMetadata = require("url-metadata");
+const { fetchVideoSizeFromHeaders } = require("../helper/FetchVideoHeaders");
 
 // Fetch instagram Video src
 async function SharechatScrappingFunction(url, res) {
@@ -55,32 +56,39 @@ async function SharechatScrappingFunction(url, res) {
       timing = await getVideoDurationInSeconds(urls[0].url).then((duration) => {
         return duration / 60;
       });
+      let fileSizeFromSource = await fetchVideoSizeFromHeaders(urls[0].url);
 
-      await urlMetadata(url).then(
-        function (metadata) {
-          urls[0].url = url;
-          urls[0].title = metadata.title;
-          urls[0].thumbnail = metadata.image;
-          urls[0].duration = timing.toFixed(2);
-          urls[0].source = "sharechat";
-          urls[0].medias = [
-            {
-              url: urls[0].url,
-              quality: "HD",
-              extension: "mp4",
-              size: "1914629",
-              formattedSize: "1.83 MB",
-              videoAvailable: true,
-              audioAvailable: true,
-            },
-          ];
-        },
-        function (error) {
-          // failure handler
-          console.log(error);
-          return null;
-        }
-      );
+      await urlMetadata(url)
+        .then(async function (metadata) {
+          let response = {
+            url: url,
+            title: metadata.title,
+            thumbnail: metadata.image,
+            duration: timing.toFixed(2),
+            source: "sharechat",
+            medias: [
+              {
+                url: urls[0].url,
+                quality: "HD",
+                extension: "mp4",
+                size: fileSizeFromSource ? fileSizeFromSource : "1914629",
+                formattedSize: fileSizeFromSource
+                  ? (fileSizeFromSource / (1024 * 1024)).toFixed(2)
+                  : "1.83 MB",
+                videoAvailable: true,
+                audioAvailable: true,
+              },
+            ],
+          };
+          await browser.close();
+
+          return utils.sendResponse(res, 200, messages.dataScrapped, response);
+        })
+        .catch(async (error) => {
+          console.error("error: ", error);
+          await browser.close();
+          return utils.sendResponse(res, 500, messages.something_wrong, error);
+        });
     }
     await browser.close();
 
