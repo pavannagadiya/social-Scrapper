@@ -11,7 +11,12 @@ const messages = {
   appUserUpdatedSuccessful: "App user updated successful.",
   facingIssueInAppUserUpdate: "Facing some issue in app user update.",
   facingIssueInAppUserInsert: "Facing some issue in app user insert.",
+  facingIssueInFeedbackInsert: "Facing some issue in app to inserting feedback.",
+  feedbackAddedSuccessFul: "Feedback added successful.",
   temDataFetched: "Temporary data fetched successful.",
+  checkFeedBackFields: "Some fields are missing.",
+  checkEmail: "Please check your email address.",
+  checkPhone: "Please check your phone number.",
 };
 
 module.exports = {

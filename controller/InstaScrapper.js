@@ -51,6 +51,7 @@ async function instaVideoScrappingFunction(url, res) {
     //Virtual browser launch
     const browser = await puppeteer.launch({
       headless: true,
+      args: ["--no-sandbox"],
     });
 
     // Open new page in virtual browser
@@ -149,12 +150,7 @@ async function instaVideoScrappingFunction(url, res) {
         ],
       };
 
-      return utils.sendResponse(
-        res,
-        200,
-        messages.dataScrapped,
-        videoResponse
-      );
+      return utils.sendResponse(res, 200, messages.dataScrapped, videoResponse);
     }
 
     return utils.sendResponse(
@@ -187,6 +183,7 @@ async function instaPhotoScrappingFunction(url, res) {
     //Virtual browser launch
     const browser = await puppeteer.launch({
       headless: true,
+      args: ["--no-sandbox"],
     });
 
     // Open new page in virtual browser

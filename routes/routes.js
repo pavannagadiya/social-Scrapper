@@ -7,6 +7,7 @@ const {
 const instaScrapperController = require("../controller/InstaScrapper");
 const youtubeScrapperController = require("../controller/YoutubeScrapper");
 const facebookScrapperController = require("../controller/FacebookScrapper");
+const FeedBackController = require("../controller/FeedbackController");
 const SingleController = require("../controller/SingleController");
 const CategoryController = require("../controller/CategoryController");
 const AppUsersController = require("../controller/UsersController");
@@ -47,5 +48,6 @@ router.get(
   urlCheckMiddleware,
   facebookScrapperController.facebookPhotoScrappingFunction
 );
+router.post("/feedback", FeedBackController.feedbackController);
 
 module.exports = router;
